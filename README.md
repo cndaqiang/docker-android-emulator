@@ -55,17 +55,22 @@ docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=2
 ```
 
 ## Debug:
+* 也许不同时间sdkmanager安装的内容不一样
+* 我最新创建的镜像比原始的[HQarroum/docker-android](https://github.com/HQarroum/docker-android) 要大好几G
+* 而且最新创建的, 安装wzry等软件会出错
+* 而我基于[HQarroum/docker-android](https://github.com/HQarroum/docker-android) 二次修改的镜像[cndaqiang/docker-android](https://github.com/cndaqiang/docker-android)就可以安装软件.
+* 真麻了
+* 而且这是基于x86的安卓模拟器, 适用的app真的有限.
 
 ```
 docker stop docker-android-emulator; docker volume rm androiddata
 docker run -d --rm --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=4 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33 
 docker run -it --rm --device /dev/kvm --entrypoint /bin/bash -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=4 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33 
 
-
 # my mod version
-docker run -d --rm --device /dev/kvm -p 5555:5555 -v data:/data --name docker-android docker-android.mod
+docker stop docker-android; docker volume rm data
+docker run -d --rm --device /dev/kvm -p 5555:5555 -v data:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=4 --name docker-android cndaqiang/docker-android:api-33
 #
-docker run -it --rm --device /dev/kvm -p 5555:5555 -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 dockerhub.anzu.vip/cndaqiang/docker-android-emulator:api-33
 ```
 
 ---
