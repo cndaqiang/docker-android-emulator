@@ -18,7 +18,7 @@ This fork includes the following modifications:
 * **`EMULATOR_ARGS`**:
    - **Meaning**: A string containing any additional arguments you want to pass to the emulator.
    - **Description**: This environment variable allows you to specify custom parameters when starting the emulator. For example:
-     - `-sdcard /path/to/sdcard.img` to specify a custom SD card image.
+     - `-timezone Asia/Shanghai`
 
 The emulator is started with the following command, which incorporates both default and custom parameters:
 ```
@@ -51,12 +51,18 @@ This project is a fork of [HQarroum/docker-android](https://github.com/HQarroum/
 ## Example:
 
 ```
-docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33
+docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e MEMORY=6144 -e CORES=2 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33
 ```
 
 ## Debug:
 
 ```
+docker stop docker-android-emulator; docker volume rm androiddata
+docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=2 --name docker-android-emulator dockerhub.anzu.vip/cndaqiang/docker-android-emulator:api-33
+# my mod version
+docker run -d --rm --device /dev/kvm -p 5555:5555 -v data:/data --name docker-android docker-android.mod
+#
+#
 docker run -it --rm --device /dev/kvm -p 5555:5555 -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 dockerhub.anzu.vip/cndaqiang/docker-android-emulator:api-33
 ```
 
