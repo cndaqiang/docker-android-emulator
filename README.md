@@ -15,6 +15,26 @@ This fork includes the following modifications:
 * **`-e PARTITION=16384`**:
    - **Meaning**: Sets the environment variable `PARTITION` to `16384`.
    - **Description**: This environment variable is typically used to specify the partition size for the emulator. In Android emulators, the partition size determines the storage capacity of the virtual device (in MB). `16384` represents a partition size of 16GB. This value will affect the amount of storage available within the virtual device, such as for app installations and data storage.
+* **`EMULATOR_ARGS`**:
+   - **Meaning**: A string containing any additional arguments you want to pass to the emulator.
+   - **Description**: This environment variable allows you to specify custom parameters when starting the emulator. For example:
+     - `-sdcard /path/to/sdcard.img` to specify a custom SD card image.
+
+The emulator is started with the following command, which incorporates both default and custom parameters:
+```
+emulator \
+  -avd android \
+  -gpu "$GPU_MODE" \
+  -memory $OPT_MEMORY \
+  -partition-size $PARTITION \
+  -no-boot-anim \
+  -cores $OPT_CORES \
+  -ranchu \
+  $AUTH_FLAG \
+  -no-window \
+  -no-snapshot  \
+  $EMULATOR_ARGS || update_state "ANDROID_STOPPED"
+```
 
 ## Why ARM64 is not supported:
 
@@ -31,13 +51,13 @@ This project is a fork of [HQarroum/docker-android](https://github.com/HQarroum/
 ## Example:
 
 ```
-docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33-playstore.x86_64
+docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33
 ```
 
 ## Debug:
 
 ```
-docker run -it --rm --device /dev/kvm -p 5555:5555 -e PARTITION=4096 -e MEMORY=4096 -e CORES=2 dockerhub.anzu.vip/cndaqiang/docker-android-emulator:api-33-arm64-v8a
+docker run -it --rm --device /dev/kvm -p 5555:5555 -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 dockerhub.anzu.vip/cndaqiang/docker-android-emulator:api-33
 ```
 
 ---
