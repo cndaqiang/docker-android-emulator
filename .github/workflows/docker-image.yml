@@ -2,7 +2,7 @@ name: Docker Android CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
     paths:
       - 'Dockerfile'
       - 'Dockerfile.gpu'
@@ -38,7 +38,7 @@ jobs:
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: halimqarroum/docker-android:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}
+          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}
           build-args: |
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
@@ -63,5 +63,5 @@ jobs:
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: halimqarroum/docker-android:minimal${{ matrix.gpu.suffix }}
+          tags: cndaqiang/docker-android-emulator:minimal${{ matrix.gpu.suffix }}
           build-args: INSTALL_ANDROID_SDK=0

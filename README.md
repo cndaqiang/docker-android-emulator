@@ -1,3 +1,34 @@
+# Docker Android Emulator
+
+[![Docker Image CI](https://github.com/cndaqiang/docker-android-emulator/actions/workflows/docker-image.yml/badge.svg)](https://github.com/cndaqiang/docker-android-emulator/actions/workflows/docker-image.yml)
+[![DeepSource](https://deepsource.io/gh/cndaqiang/docker-android-emulator.svg/?label=active+issues&show_trend=true&token=dsp_2d663e311e8b28513abf8582687b015394a2)](https://deepsource.io/gh/cndaqiang/docker-android-emulator/?ref=repository-badge)
+![Docker Pulls](https://img.shields.io/docker/pulls/cndaqiang/docker-android-emulator)
+
+This repository contains Docker images for building Android emulator. The images are based on [HQarroum/docker-android](https://github.com/HQarroum/docker-android) and have been forked and modified to better suit my needs. The modified version can be found at [cndaqiang/docker-android-emulator](https://github.com/cndaqiang/docker-android-emulator).
+
+You can pull the Docker image from Docker Hub:[cndaqiang/docker-android-emulator](https://hub.docker.com/r/cndaqiang/docker-android-emulator).
+
+## Modifications
+
+This fork includes the following modifications:
+* **`-e PARTITION=16384`**:
+   - **Meaning**: Sets the environment variable `PARTITION` to `16384`.
+   - **Description**: This environment variable is typically used to specify the partition size for the emulator. In Android emulators, the partition size determines the storage capacity of the virtual device (in MB). `16384` represents a partition size of 16GB. This value will affect the amount of storage available within the virtual device, such as for app installations and data storage.
+
+## Credits
+
+This project is a fork of [HQarroum/docker-android](https://github.com/HQarroum/docker-android). I would like to thank the original author for providing a great foundation and the base Dockerfiles that made it possible to easily create these custom Android environments.
+
+## Example:
+
+```
+docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android cndaqiang/docker-android-qemu:api-33
+```
+
+
+---
+
+
 <br /><br /><br />
 <p align="center">
   <img width="400" src="assets/icon.png" />
