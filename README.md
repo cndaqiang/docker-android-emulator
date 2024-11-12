@@ -8,12 +8,22 @@ This repository contains Docker images for building Android emulator. The images
 
 You can pull the Docker image from Docker Hub:[cndaqiang/docker-android-emulator](https://hub.docker.com/r/cndaqiang/docker-android-emulator).
 
+
 ## Modifications
 
 This fork includes the following modifications:
 * **`-e PARTITION=16384`**:
    - **Meaning**: Sets the environment variable `PARTITION` to `16384`.
    - **Description**: This environment variable is typically used to specify the partition size for the emulator. In Android emulators, the partition size determines the storage capacity of the virtual device (in MB). `16384` represents a partition size of 16GB. This value will affect the amount of storage available within the virtual device, such as for app installations and data storage.
+* **Added arm64-v8a Emulator**: 
+   - **Description**: The emulator image now includes `arm64-v8a` support, enabling building and running ARM-based images on ARM64 architectures.
+   - **Note**: Due to limitations with the `sdkmanager` on ARM64 devices, the emulator component is unavailable on ARM64 platforms. Therefore, this container is only supported for running on `amd64` platforms.
+
+## Why ARM64 is not supported:
+
+Currently, on ARM64 devices, the `sdkmanager` does not include the `emulator` component, making it impossible to create an emulator image on such platforms. As a result, this container can only be run on `amd64` platforms. More See [build.arm64.faild](build.arm64.faild.md)
+
+For ARM64 devices, we provide only a minimal version of the image that excludes the Android SDK and emulator, useful primarily as a base image for other purposes. More details on the ARM64 limitations can be found here.
 
 ## Credits
 

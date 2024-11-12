@@ -26,6 +26,9 @@ jobs:
           { file: 'Dockerfile', suffix: '' },
           { file: 'Dockerfile.gpu', suffix: '-cuda' }
         ]
+        # 这个参数是模拟器的处理器, 不是容器的平台
+        # 目前arm64的设备上, sdkmanager没有emulator组件, 无法创建模拟器, 因此只能在amd64的平台上运行次容器
+        architecture: [x86_64, arm64-v8a]
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -33,12 +36,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}
+      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.architecture }}
+        # 只在x86时编译cuda
+        #if: ${{ matrix.gpu.suffix != '-cuda' || (matrix.architecture == 'x86_64' && matrix.gpu.suffix == '-cuda') }}
+        # 测试阶段使用就只编译32位了, 节省docker的limit
+        if: ${{ matrix.version == 32 && (matrix.gpu.suffix != '-cuda' || (matrix.architecture == 'x86_64' && matrix.gpu.suffix == '-cuda')) }}
         uses: docker/build-push-action@v4
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}
+          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}${{ matrix.architecture }}
           build-args: |
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
@@ -65,3 +72,31 @@ jobs:
           file: ${{ matrix.gpu.file }}
           tags: cndaqiang/docker-android-emulator:minimal${{ matrix.gpu.suffix }}
           build-args: INSTALL_ANDROID_SDK=0
+
+  # Builds a minimal arm64 image for development without any Android SDK components.
+  build-dev-arm64:
+    strategy:
+      matrix:
+        dockerfile: [
+          { file: 'Dockerfile.bash', suffix: 'armlinux' },
+        ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      # 启用 Buildx，支持多架构构建 for arm64 and amd64
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+      - name: Build minimal Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          file: ${{ matrix.dockerfile.file }}
+          tags: cndaqiang/docker-android-emulator:dev.${{ matrix.dockerfile.suffix }}
+          build-args: INSTALL_ANDROID_SDK=0
+          platforms: linux/arm64
