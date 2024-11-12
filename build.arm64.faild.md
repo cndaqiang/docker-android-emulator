@@ -1,9 +1,11 @@
+```
 docker pull --platform linux/arm64 openjdk:18-jdk-slim
 docker save --output=openjdk-18-jdk-slim-arm64.tar openjdk:18-jdk-slim
 scporacle openjdk-18-jdk-slim-arm64.tar
 docker load --input=openjdk-18-jdk-slim-arm64.tar
 docker build --platform linux/arm64 -f Dockerfile.arm64 -t docker-android-emulator:api-33-arm64 .
 docker run -it --entrypoint /bin/bash --rm  -p 5555:5555 -e PARTITION=4096 -e MEMORY=4096 -e CORES=2 docker-android-emulator:api-33-arm64
+```
 
 ```
 INSTALL_ANDROID_SDK=1

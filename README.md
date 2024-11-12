@@ -23,7 +23,7 @@ This fork includes the following modifications:
 
 Currently, on ARM64 devices, the `sdkmanager` does not include the `emulator` component, making it impossible to create an emulator image on such platforms. As a result, this container can only be run on `amd64` platforms. More See [build.arm64.faild](build.arm64.faild.md)
 
-For ARM64 devices, we provide only a minimal version of the image that excludes the Android SDK and emulator, useful primarily as a base image for other purposes. More details on the ARM64 limitations can be found here.
+For ARM64 devices, we provide only a minimal version of the image that excludes the Android SDK and emulator, useful primarily as a base image for other purposes.
 
 ## Credits
 
