@@ -45,13 +45,15 @@ jobs:
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}${{ matrix.architecture }}
+          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}.${{ matrix.architecture }}
           build-args: |
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
 
   # Builds a minimal image without any Android SDK images.
   build-minimal:
+    # 这个使用原始仓库就行, m没必要编译
+    if: ${{ false }}
     strategy:
       matrix:
         gpu: [
