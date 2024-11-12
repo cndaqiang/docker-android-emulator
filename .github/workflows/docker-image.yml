@@ -2,7 +2,7 @@ name: Docker Android CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
     paths:
       - 'Dockerfile'
       - 'Dockerfile.gpu'
@@ -17,20 +17,12 @@ jobs:
   build-apis:
     strategy:
       matrix:
-        version: [33, 32, 31, 30, 29, 28]
+        version: [33]
         image: [
-          { name: 'google_apis', suffix: '' },
-          { name: 'google_apis_playstore', suffix: '-playstore' }
+          { name: 'google_apis', suffix: '' }
         ]
         gpu: [
-          { file: 'Dockerfile', suffix: '' },
-          { file: 'Dockerfile.gpu', suffix: '-cuda' }
-        ]
-        # 这个参数是模拟器的处理器, 不是容器的平台
-        # 目前arm64的设备上, sdkmanager没有emulator组件, 无法创建模拟器, 因此只能在amd64的平台上运行次容器
-        architecture: [
-          { cpu: 'x86_64', suffix: '' },
-          { cpu: 'arm64-v8a', suffix: '-arm64-v8a' }
+          { file: 'Dockerfile', suffix: '' }
         ]
     runs-on: ubuntu-latest
     steps:
@@ -39,24 +31,18 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.architecture.suffix }}
-        if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'arm64-v8a') && (matrix.image.name != 'google_apis_playstore') }}
-        #if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'arm64-v8a') }}
+      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}
         uses: docker/build-push-action@v4
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}${{ matrix.architecture.suffix }}
+          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}
           build-args: |
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
-            ARCHITECTURE=${{ matrix.architecture.cpu }}
-            ABI=${{ matrix.image.name }}/${{ matrix.architecture.cpu }}
-          # 所有的变量名都要添加的, 包括这个ABI
 
   # Builds a minimal image without any Android SDK images.
   build-minimal:
-    # 这个使用原始仓库就行, 没必要编译
     if: ${{ false }}
     strategy:
       matrix:
@@ -78,32 +64,3 @@ jobs:
           file: ${{ matrix.gpu.file }}
           tags: cndaqiang/docker-android-emulator:minimal${{ matrix.gpu.suffix }}
           build-args: INSTALL_ANDROID_SDK=0
-
-  # Builds a minimal arm64 image for development without any Android SDK components.
-  build-dev-arm64:
-    if: ${{ false }}
-    strategy:
-      matrix:
-        dockerfile: [
-          { file: 'Dockerfile.bash', suffix: 'armlinux' },
-        ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      # 启用 Buildx，支持多架构构建 for arm64 and amd64
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          install: true
-      - name: Build minimal Docker image
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          file: ${{ matrix.dockerfile.file }}
-          tags: cndaqiang/docker-android-emulator:dev.${{ matrix.dockerfile.suffix }}
-          build-args: INSTALL_ANDROID_SDK=0
-          platforms: linux/arm64
