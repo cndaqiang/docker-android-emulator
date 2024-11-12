@@ -40,11 +40,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.architecture.suffix }}
-        # 只在x86时编译cuda
-        #if: ${{ matrix.gpu.suffix != '-cuda' || (matrix.architecture.cpu == 'x86_64' && matrix.gpu.suffix == '-cuda') }}
-        # 测试阶段使用就只编译32位了, 节省docker的limit
-        # if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'x86_64') && (matrix.image.name != 'google_apis_playstore') }}
-        if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'arm64-v8a') }}
+        if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'arm64-v8a') && (matrix.image.name != 'google_apis_playstore') }}
+        #if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'arm64-v8a') }}
         uses: docker/build-push-action@v4
         with:
           push: true
@@ -54,6 +51,8 @@ jobs:
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
             ARCHITECTURE=${{ matrix.architecture.cpu }}
+            ABI=${{ matrix.image.name }}/${{ matrix.architecture.cpu }}
+          # 所有的变量名都要添加的, 包括这个ABI
 
   # Builds a minimal image without any Android SDK images.
   build-minimal:
