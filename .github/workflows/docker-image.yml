@@ -28,7 +28,10 @@ jobs:
         ]
         # 这个参数是模拟器的处理器, 不是容器的平台
         # 目前arm64的设备上, sdkmanager没有emulator组件, 无法创建模拟器, 因此只能在amd64的平台上运行次容器
-        architecture: [x86_64, arm64-v8a]
+        architecture: [
+          { cpu: 'x86_64', suffix: '' },
+          { cpu: 'arm64-v8a', suffix: '-arm64-v8a' }
+        ]
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -36,23 +39,24 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.architecture }}
+      - name: Build Docker image api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.architecture.suffix }}
         # 只在x86时编译cuda
-        #if: ${{ matrix.gpu.suffix != '-cuda' || (matrix.architecture == 'x86_64' && matrix.gpu.suffix == '-cuda') }}
+        #if: ${{ matrix.gpu.suffix != '-cuda' || (matrix.architecture.cpu == 'x86_64' && matrix.gpu.suffix == '-cuda') }}
         # 测试阶段使用就只编译32位了, 节省docker的limit
-        if: ${{ matrix.version == 33 && (matrix.gpu.suffix != '-cuda' || (matrix.architecture == 'x86_64' && matrix.gpu.suffix == '-cuda')) }}
+        if: ${{ matrix.version == 33 && matrix.gpu.suffix != '-cuda' && matrix.architecture.cpu != "x86_64" }}
         uses: docker/build-push-action@v4
         with:
           push: true
           file: ${{ matrix.gpu.file }}
-          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}.${{ matrix.architecture }}
+          tags: cndaqiang/docker-android-emulator:api-${{ matrix.version }}${{ matrix.image.suffix }}${{ matrix.gpu.suffix }}${{ matrix.architecture.suffix }}
           build-args: |
             API_LEVEL=${{ matrix.version }}
             IMG_TYPE=${{ matrix.image.name }}
+            ARCHITECTURE=${{ matrix.architecture.cpu }}
 
   # Builds a minimal image without any Android SDK images.
   build-minimal:
-    # 这个使用原始仓库就行, m没必要编译
+    # 这个使用原始仓库就行, 没必要编译
     if: ${{ false }}
     strategy:
       matrix:
@@ -77,6 +81,7 @@ jobs:
 
   # Builds a minimal arm64 image for development without any Android SDK components.
   build-dev-arm64:
+    if: ${{ false }}
     strategy:
       matrix:
         dockerfile: [

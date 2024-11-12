@@ -32,7 +32,7 @@ This project is a fork of [HQarroum/docker-android](https://github.com/HQarroum/
 ## Example:
 
 ```
-docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android cndaqiang/docker-android-qemu:api-33
+docker run -d --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=16384 -e MEMORY=4096 -e CORES=2 --name docker-android-emulator cndaqiang/docker-android-emulator:api-33-playstore.x86_64
 ```
 
 
