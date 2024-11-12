@@ -43,7 +43,7 @@ jobs:
         # 只在x86时编译cuda
         #if: ${{ matrix.gpu.suffix != '-cuda' || (matrix.architecture.cpu == 'x86_64' && matrix.gpu.suffix == '-cuda') }}
         # 测试阶段使用就只编译32位了, 节省docker的limit
-        if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'x86_64') }}
+        if: ${{ (matrix.version == 33) && (matrix.gpu.suffix != '-cuda') && (matrix.architecture.cpu != 'x86_64') && (matrix.image.name != 'google_apis_playstore') }}
         uses: docker/build-push-action@v4
         with:
           push: true
