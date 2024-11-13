@@ -17,7 +17,7 @@ jobs:
   build-apis:
     strategy:
       matrix:
-        version: [33]
+        version: [27]
         image: [
           { name: 'google_apis', suffix: '' }
         ]

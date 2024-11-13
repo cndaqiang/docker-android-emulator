@@ -15,6 +15,7 @@ jobs:
 
   # Builds all Android API images with API level 33 and below.
   build-apis:
+    if: ${{ false }}
     strategy:
       matrix:
         version: [33]

@@ -25,7 +25,9 @@ LABEL version "1.0.0"
 
 # Arguments that can be overriden at build-time.
 ARG INSTALL_ANDROID_SDK=1
-ARG API_LEVEL=33
+#ARM64 emulation on a x86_64 host currently is only possible up to API level 27 Oreo:
+#https://stackoverflow.com/questions/74760054/panic-avds-cpu-architecture-arm64-is-not-supported-by-the-qemu2-emulator-on
+ARG API_LEVEL=27
 ARG IMG_TYPE=google_apis
 ARG ARCHITECTURE=arm64-v8a
 ARG CMD_LINE_VERSION=9477386_latest
