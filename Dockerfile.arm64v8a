@@ -13,8 +13,7 @@ RUN apt update && apt install -y curl \
 	libxkbcommon-dev libgbm-dev libasound-dev libnss3 \
 	libxcursor1 libpulse-dev libxshmfence-dev \
 	xauth xvfb x11vnc fluxbox wmctrl libdbus-glib-1-2 socat \
-	virt-manager \
-	qemu qemu-kvm qemu-system-arm qemu-utils
+	virt-manager
 
 
 # Docker labels.
@@ -25,7 +24,7 @@ LABEL version "1.0.0"
 
 # Arguments that can be overriden at build-time.
 ARG INSTALL_ANDROID_SDK=1
-#ARM64 emulation on a x86_64 host currently is only possible up to API level 27 Oreo:
+#ARM64 emulation on a x86_64 host currently is only possible up to API level 27 Oreo: Android 8.1
 #https://stackoverflow.com/questions/74760054/panic-avds-cpu-architecture-arm64-is-not-supported-by-the-qemu2-emulator-on
 ARG API_LEVEL=27
 ARG IMG_TYPE=google_apis

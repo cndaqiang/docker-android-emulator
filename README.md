@@ -73,11 +73,20 @@ docker run -d --rm --device /dev/kvm -p 5555:5555 -v data:/data -e PARTITION=245
 #
 ```
 
+api-33arm64v8a
+```
+PANIC: Avd's CPU Architecture 'arm64' is not supported by the QEMU2 emulator on x86_64 host.
+```
+api-27arm64v8a
+```
+PANIC: QEMU2 emulator does not support arm64 CPU architecture{ "type": "state-update", "value": "ANDROID_STOPPED" }
+```
+
 ```
 docker pull cndaqiang/docker-android-emulator:api-27arm64v8a
 
 docker run -it --rm  --entrypoint /bin/bash  --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=4 --name docker-android-emulator cndaqiang/docker-android-emulator:api-27arm64v8a
-docker run -it --rm --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai" -e MEMORY=6144 -e CORES=4 --name docker-android-emulator cndaqiang/docker-android-emulator:api-27arm64v8a
+docker run -it --rm --device /dev/kvm -p 5555:5555 -v androiddata:/data -e PARTITION=24576 -e EMULATOR_ARGS="-timezone Asia/Shanghai  -no-accel -no-window -no-audio -no-boot-anim" -e MEMORY=6144 -e CORES=4 --name docker-android-emulator cndaqiang/docker-android-emulator:api-27arm64v8a
 ```
 
 ---
